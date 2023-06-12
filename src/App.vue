@@ -3,8 +3,29 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
   </nav>
+  <HelloWorld />
   <router-view />
 </template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import HelloWorld from "@/components/HelloWorld.vue";
+
+export default defineComponent({
+  components: { HelloWorld },
+  date() {
+    return {
+      title: "any",
+      list: [
+        {
+          name: "q",
+          age: "1",
+        },
+      ],
+    };
+  },
+});
+</script>
 
 <style>
 #app {
