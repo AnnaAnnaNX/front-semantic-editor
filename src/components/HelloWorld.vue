@@ -6,12 +6,27 @@
       {{ mode }}
     </option>
   </select>
+  <div>
+    modeForSelection
+    <select v-model="modeForSelection">
+      <option
+        v-for="mode in listOfModes.filter((mode) => mode !== 'all')"
+        :key="mode"
+        :value="mode"
+      >
+        {{ mode }}
+      </option>
+    </select>
+  </div>
   <div :style="stylesForContent">
     <div class="content" v-html="content"></div>
   </div>
   <component :is="'style'">
     {{ stylesForContent }}
   </component>
+  <pre>
+    {{ content }}
+  </pre>
 </template>
 
 <script setup lang="ts">
@@ -37,6 +52,7 @@ const content = ref<string>(HTMLcontent);
 const currentMode = ref<string>("all");
 const listOfModes = ref<string[]>(["main", "interesting", "off-topic", "all"]); // должны быть уникальные значения
 const selectedHTML = ref<string>("");
+const modeForSelection = ref<string>("main");
 
 document.onselectionchange = () => {
   console.log("document.onselectionchange");
@@ -46,11 +62,13 @@ document.onselectionchange = () => {
   if (!selection) {
     return;
   }
+  const range = selection.getRangeAt(0);
+  let { startContainer, startOffset, endContainer, endOffset } = range;
 
-  let { anchorNode, anchorOffset, focusNode, focusOffset } = selection;
+  // check selection in .content
 
-  console.log(`${anchorNode}, offset ${anchorOffset}`);
-  console.log(`${focusNode}, offset ${focusOffset}`);
+  console.log(`${startContainer}, offset ${startOffset}`);
+  console.log(`${endContainer}, offset ${endOffset}`);
 
   selectedHTML.value = "";
 
@@ -64,7 +82,24 @@ document.onselectionchange = () => {
   }
 
   // check selection in one Node
-  console.log(anchorNode === focusNode);
+  console.log(startContainer === endContainer);
+  if (startContainer === endContainer && startOffset !== endOffset) {
+    // create new range oe selection, rap in to span
+    let range1 = new Range();
+    range1.setStart(startContainer, startOffset);
+    range1.setEnd(startContainer, endOffset);
+    let newNode = document.createElement("span");
+    newNode.className = modeForSelection.value;
+    try {
+      range1.surroundContents(newNode);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  const el = document.querySelector(".content");
+  if (el) {
+    content.value = el.innerHTML;
+  }
 };
 
 const stylesForContent = computed(() => {
@@ -79,3 +114,12 @@ const stylesForContent = computed(() => {
   }
 });
 </script>
+
+<style>
+.main {
+  background-color: palevioletred;
+}
+.interesting {
+  background-color: aquamarine;
+}
+</style>
