@@ -5,6 +5,9 @@ export default defineConfig({
   plugins: [Vue()],
   test: {
     globals: true,
-    environment: "jsdom",
+    coverage: {
+      provider: 'istanbul'
+    },
+    environment: "happy-dom",
   },
 });
