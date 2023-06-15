@@ -1,22 +1,22 @@
 <template>
   <div>{{ selectedHTML }}</div>
   {{ currentMode }}
-  <select v-model="currentMode">
-    <option v-for="mode in listOfModes" :key="mode" :value="mode">
-      {{ mode }}
-    </option>
-  </select>
+<!--  <select v-model="currentMode">-->
+<!--    <option v-for="mode in listOfModes" :key="mode" :value="mode">-->
+<!--      {{ mode }}-->
+<!--    </option>-->
+<!--  </select>-->
   <div>
     modeForSelection
-    <select v-model="modeForSelection">
-      <option
-        v-for="mode in listOfModes.filter((mode) => mode !== 'all')"
-        :key="mode"
-        :value="mode"
-      >
-        {{ mode }}
-      </option>
-    </select>
+<!--    <select v-model="modeForSelection">-->
+<!--      <option-->
+<!--        v-for="mode in listOfModes.filter((mode) => mode !== 'all')"-->
+<!--        :key="mode"-->
+<!--        :value="mode"-->
+<!--      >-->
+<!--        {{ mode }}-->
+<!--      </option>-->
+<!--    </select>-->
   </div>
   <div :style="stylesForContent">
     <div class="content" v-html="content"></div>
@@ -77,6 +77,7 @@ document.onselectionchange = () => {
     let newNode = document.createElement("span");
     newNode.className = modeForSelection.value;
     try {
+      const text1 = range1.toString();
       range1.surroundContents(newNode);
     } catch (e) {
       console.log(e);
