@@ -34,8 +34,8 @@ describe("addSelection", () => {
     const range = new Range();
     console.log('wrapper.find("div")');
     console.log(wrapper.find("span").text());
-    range.setStart(wrapper.find("span").element.firstChild, 4);
-    range.setEnd(wrapper.find("span").element.firstChild, 10);
+    range.setStart(wrapper.find("span").element.firstChild as Node, 4);
+    range.setEnd(wrapper.find("span").element.firstChild as Node, 10);
     document.getSelection()?.addRange(range);
     // wrapper.find(".content").element.getSelection().addRange(range);
 

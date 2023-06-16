@@ -1,8 +1,8 @@
 import { shallowMount } from "@vue/test-utils";
 import GuessAge from "../components/GuessAge.vue";
-import { assert, describe } from "vitest";
+import { assert, describe, it } from "vitest";
 // import { expect, test } from "vitest";
-const wrapper = shallowMount(GuessAge, {
+const wrapper = shallowMount(GuessAge as any, {
   propsData: {
     title: "Guess User Age App",
   },
