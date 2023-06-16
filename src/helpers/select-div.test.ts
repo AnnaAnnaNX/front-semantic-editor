@@ -24,7 +24,7 @@ describe("selectDiv", () => {
     // call function
 
     const divElement = fragment.querySelector(".content div");
-    if (!divElement) throw new Error("empty span");
+    if (!divElement) throw new Error("empty div");
     if (!(divElement instanceof HTMLDivElement))
       throw new Error("span not HTMLDivElement");
     const startSpanElement = fragment.querySelector("span.all");
@@ -43,7 +43,6 @@ describe("selectDiv", () => {
     // compare
     assert.equal(realOutputHTML, outputHTML);
   });
-
 
   it("II - elements before and after selection", async () => {
     // create structure HTML
@@ -71,7 +70,7 @@ describe("selectDiv", () => {
     // call function
 
     const divElement = fragment.querySelector(".content div");
-    if (!divElement) throw new Error("empty span");
+    if (!divElement) throw new Error("empty div");
     if (!(divElement instanceof HTMLDivElement))
       throw new Error("span not HTMLDivElement");
     const startSpanElement = fragment.querySelector("span.all");
@@ -115,7 +114,7 @@ describe("selectDiv", () => {
     // call function
 
     const divElement = fragment.querySelector(".content div");
-    if (!divElement) throw new Error("empty span");
+    if (!divElement) throw new Error("empty div");
     if (!(divElement instanceof HTMLDivElement))
       throw new Error("span not HTMLDivElement");
     const startSpanElement = fragment.querySelector("span.all");

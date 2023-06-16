@@ -1,5 +1,7 @@
 // mutable
 
+import { HTMLElement } from "happy-dom";
+
 export const fragmentFromString = (stringHTML: string): DocumentFragment => {
   return document.createRange().createContextualFragment(stringHTML);
 };
@@ -45,7 +47,7 @@ export const selectSpan = (
   spanElement.replaceWith(nodesFragment);
 };
 
-const divideTest = (text: string, index: number) => {
+const divideText = (text: string, index: number) => {
   const rightPartText = text.slice(0, index);
   const leftPartText = text.slice(index);
   return [rightPartText, leftPartText];
@@ -70,7 +72,7 @@ export const selectDiv = (
       if (!startSpanElement.textContent) {
         throw new Error();
       }
-      const [rightPartText, leftPartText] = divideTest(
+      const [rightPartText, leftPartText] = divideText(
         startSpanElement.textContent,
         startIndex
       );
@@ -84,14 +86,18 @@ export const selectDiv = (
       if (!endSpanElement.textContent) {
         throw new Error();
       }
-      const [rightPartText, leftPartText] = divideTest(
+      const [rightPartText, leftPartText] = divideText(
         endSpanElement.textContent,
         endIndex
       );
       middleSpanContent += rightPartText;
       const unionMiddleSpan = createSpan(middleSpanContent, newModeClass);
       divElement.insertBefore(unionMiddleSpan, endSpanElement);
-      endSpanElement.textContent = leftPartText;
+      if (leftPartText.length) {
+        endSpanElement.textContent = leftPartText;
+      } else {
+        endSpanElement.remove();
+      }
       break;
     }
     const nextElement = startSpanElement.nextElementSibling;
@@ -100,5 +106,111 @@ export const selectDiv = (
     }
     el = nextElement;
   }
+  if (!startSpanElement?.textContent.length) {
+    startSpanElement.remove();
+  }
 };
-export const selectDivs = () => {};
+const getFirstSpanInDiv = (div: HTMLDivElement): [HTMLSpanElement, number] => {
+  const span = div.firstElementChild;
+  if (!span) {
+    throw new Error("not child in div");
+  }
+  if (!(span instanceof HTMLSpanElement)) {
+    throw new Error("first child in div is not a span");
+  }
+  return [span, 0];
+};
+
+const getLastSpanInDiv = (div: HTMLDivElement): [HTMLSpanElement, number] => {
+  const span = div.lastElementChild;
+  if (!span) {
+    throw new Error("not child in div");
+  }
+  if (!(span instanceof HTMLSpanElement)) {
+    throw new Error("last child in div is not a span");
+  }
+  const text = span?.textContent;
+  if (text === null) {
+    throw new Error("textContent in span equal null");
+  }
+  return [span, text.length];
+};
+
+export const selectDivs = (
+  contentElement: HTMLDivElement,
+  startSpanElement: HTMLSpanElement,
+  startIndex: number,
+  endSpanElement: HTMLSpanElement,
+  endIndex: number,
+  newModeClass: string
+) => {
+  const startDiv = startSpanElement.parentNode;
+  if (!startDiv) {
+    throw new Error("empty element");
+  }
+  if (!(startDiv instanceof HTMLDivElement)) {
+    throw new Error("el not type HTMLDivElement");
+  }
+  // checkExistanceElement(startDiv, HTMLDivElement);
+  const endDiv = endSpanElement.parentNode;
+  // if (!endDiv) {
+  //   throw new Error("empty element");
+  // }
+  if (!(endDiv instanceof HTMLDivElement)) {
+    throw new Error("el not type HTMLDivElement");
+  }
+  // checkExistanceElement(endDiv, HTMLDivElement);
+  if (startDiv === endDiv) {
+    selectDiv(
+      startDiv,
+      startSpanElement,
+      startIndex,
+      endSpanElement,
+      endIndex,
+      newModeClass
+    );
+    return;
+  }
+  let el = startDiv;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    if (el === startDiv) {
+      const [lastSpanInDiv, lastIndexInSpan] = getLastSpanInDiv(el);
+      selectDiv(
+        el,
+        startSpanElement,
+        startIndex,
+        lastSpanInDiv,
+        lastIndexInSpan,
+        newModeClass
+      );
+    } else if (el !== endDiv) {
+      const [firstSpanInDiv, firstIndexInSpan] = getFirstSpanInDiv(el);
+      const [lastSpanInDiv, lastIndexInSpan] = getLastSpanInDiv(el);
+      selectDiv(
+        el,
+        firstSpanInDiv,
+        firstIndexInSpan,
+        lastSpanInDiv,
+        lastIndexInSpan,
+        newModeClass
+      );
+    } else {
+      const [firstSpanInDiv, firstIndexInSpan] = getFirstSpanInDiv(el);
+      selectDiv(
+        el,
+        firstSpanInDiv,
+        firstIndexInSpan,
+        endSpanElement,
+        endIndex,
+        newModeClass
+      );
+      break;
+    }
+    const nextElement = el.nextElementSibling;
+    if (!nextElement || !(nextElement instanceof HTMLDivElement)) {
+      throw new Error("not sibling or sibling is not a div");
+    }
+    el = nextElement;
+  }
+};
