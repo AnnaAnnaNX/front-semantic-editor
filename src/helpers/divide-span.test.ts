@@ -18,23 +18,82 @@ describe("divideSpan", () => {
         </div>
       </div>
     `;
-    const outputHTML = `
-      <div class="content">
+    const outputHTML = `<div class="content">
         <div>
-          <span class="all">one </span>
-          <span class="new">two </span>
-          <span class="all">three</span>
+          <span class="all">one </span><span class="new">two </span><span class="all">three</span>
         </div>
-      </div>
-    `;
+      </div>`;
     // create fragment
     const fragment = fragmentFromString(stringHTML);
 
     // call function
-    const textNodeInSpan = fragment.querySelector("span")?.firstChild;
-    if (!textNodeInSpan) throw new Error("empty span");
-    if (!(textNodeInSpan instanceof Text)) throw new Error("empty span");
-    divideSpan(textNodeInSpan, 4, textNodeInSpan, 10, "new");
+    const spanElement = fragment.querySelector("span");
+    if (!spanElement) throw new Error("empty span");
+    if (!(spanElement instanceof HTMLSpanElement))
+      throw new Error("span not HTMLSpanElement");
+    divideSpan(spanElement, 4, 8, "new");
+
+    // get HTML from fragment
+    const realOutputHTML = fragment.querySelector(".content")?.outerHTML;
+
+    // compare
+    assert.equal(realOutputHTML, outputHTML);
+  });
+
+  it("I - select text from the beginning", async () => {
+    // create structure HTML
+    const stringHTML = `
+      <div class="content">
+        <div>
+          <span class="all">one two three</span>
+        </div>
+      </div>
+    `;
+    const outputHTML = `<div class="content">
+        <div>
+          <span class="new">one two </span><span class="all">three</span>
+        </div>
+      </div>`;
+    // create fragment
+    const fragment = fragmentFromString(stringHTML);
+
+    // call function
+    const spanElement = fragment.querySelector("span");
+    if (!spanElement) throw new Error("empty span");
+    if (!(spanElement instanceof HTMLSpanElement))
+      throw new Error("span not HTMLSpanElement");
+    divideSpan(spanElement, 0, 8, "new");
+
+    // get HTML from fragment
+    const realOutputHTML = fragment.querySelector(".content")?.outerHTML;
+
+    // compare
+    assert.equal(realOutputHTML, outputHTML);
+  });
+
+  it("I - select text from the end", async () => {
+    // create structure HTML
+    const stringHTML = `
+      <div class="content">
+        <div>
+          <span class="all">one two three</span>
+        </div>
+      </div>
+    `;
+    const outputHTML = `<div class="content">
+        <div>
+          <span class="all">one </span><span class="new">two three</span>
+        </div>
+      </div>`;
+    // create fragment
+    const fragment = fragmentFromString(stringHTML);
+
+    // call function
+    const spanElement = fragment.querySelector("span");
+    if (!spanElement) throw new Error("empty span");
+    if (!(spanElement instanceof HTMLSpanElement))
+      throw new Error("span not HTMLSpanElement");
+    divideSpan(spanElement, 4, 13, "new");
 
     // get HTML from fragment
     const realOutputHTML = fragment.querySelector(".content")?.outerHTML;
