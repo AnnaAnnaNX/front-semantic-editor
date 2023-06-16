@@ -1,7 +1,7 @@
 import { assert, describe, it } from "vitest";
-import { fragmentFromString, divideSpan } from "../helpers/selection";
+import { fragmentFromString, selectSpan } from "../helpers/selection";
 
-describe("divideSpan", () => {
+describe("selectSpan", () => {
   it("fragmentFromString", () => {
     const stringHTML = "<div>test</div>";
     const fragment = fragmentFromString(stringHTML);
@@ -31,7 +31,7 @@ describe("divideSpan", () => {
     if (!spanElement) throw new Error("empty span");
     if (!(spanElement instanceof HTMLSpanElement))
       throw new Error("span not HTMLSpanElement");
-    divideSpan(spanElement, 4, 8, "new");
+    selectSpan(spanElement, 4, 8, "new");
 
     // get HTML from fragment
     const realOutputHTML = fragment.querySelector(".content")?.outerHTML;
@@ -62,7 +62,7 @@ describe("divideSpan", () => {
     if (!spanElement) throw new Error("empty span");
     if (!(spanElement instanceof HTMLSpanElement))
       throw new Error("span not HTMLSpanElement");
-    divideSpan(spanElement, 0, 8, "new");
+    selectSpan(spanElement, 0, 8, "new");
 
     // get HTML from fragment
     const realOutputHTML = fragment.querySelector(".content")?.outerHTML;
@@ -93,7 +93,7 @@ describe("divideSpan", () => {
     if (!spanElement) throw new Error("empty span");
     if (!(spanElement instanceof HTMLSpanElement))
       throw new Error("span not HTMLSpanElement");
-    divideSpan(spanElement, 4, 13, "new");
+    selectSpan(spanElement, 4, 13, "new");
 
     // get HTML from fragment
     const realOutputHTML = fragment.querySelector(".content")?.outerHTML;
