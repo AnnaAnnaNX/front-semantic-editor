@@ -1,22 +1,18 @@
 <template>
   <div>{{ selectedHTML }}</div>
   {{ currentMode }}
-  <!--  <select v-model="currentMode">-->
-  <!--    <option v-for="mode in listOfModes" :key="mode" :value="mode">-->
-  <!--      {{ mode }}-->
-  <!--    </option>-->
-  <!--  </select>-->
+  <select v-model="currentMode">
+    <option v-for="mode in listOfModes" :key="mode" :value="mode">
+      {{ mode }}
+    </option>
+  </select>
   <div>
-    modeForSelection
-    <!--    <select v-model="modeForSelection">-->
-    <!--      <option-->
-    <!--        v-for="mode in listOfModes.filter((mode) => mode !== 'all')"-->
-    <!--        :key="mode"-->
-    <!--        :value="mode"-->
-    <!--      >-->
-    <!--        {{ mode }}-->
-    <!--      </option>-->
-    <!--    </select>-->
+    {{ modeForSelection }}
+    <select v-model="modeForSelection">
+      <option v-for="mode in listOfModes" :key="mode" :value="mode">
+        {{ mode }}
+      </option>
+    </select>
   </div>
   <div :style="stylesForContent">
     <div class="content" v-html="content"></div>
@@ -30,6 +26,7 @@
 </template>
 
 <script setup lang="ts">
+import debounce from "lodash/debounce";
 import { ref, computed, defineProps } from "vue";
 import { selectDivs } from "@/helpers/selection";
 import { checkExistenceSpanElement } from "@/helpers/utils";
@@ -42,7 +39,14 @@ const listOfModes = ref<string[]>(["main", "interesting", "off-topic", "all"]); 
 const selectedHTML = ref<string>("");
 const modeForSelection = ref<string>("main");
 
-document.onselectionchange = () => {
+document.addEventListener(
+  "selectionchange",
+  debounce(() => {
+    selectionChangeHandler();
+  }, 500)
+);
+
+const selectionChangeHandler = () => {
   console.log("document.onselectionchange");
 
   let selection = document.getSelection();
@@ -52,6 +56,10 @@ document.onselectionchange = () => {
   }
   const range = selection.getRangeAt(0);
   let { startContainer, startOffset, endContainer, endOffset } = range;
+  console.log("startContainer typeof");
+  console.log(startContainer instanceof window.Text);
+  console.log("endContainer typeof");
+  console.log(endContainer instanceof window.Text);
 
   const el = document.querySelector(".content");
   if (!el) {
@@ -71,7 +79,7 @@ document.onselectionchange = () => {
       startOffset,
       endSpan as HTMLSpanElement,
       endOffset,
-      currentMode.value
+      modeForSelection.value
     );
   } catch (e) {
     console.log(e);

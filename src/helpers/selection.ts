@@ -106,10 +106,10 @@ export const selectDiv = (
     }
     el = nextElement;
   }
-  if (!startSpanElement.textContent) {
-    throw new Error("empty textContent");
-  }
-  if (!startSpanElement?.textContent.length) {
+  // if (!startSpanElement.textContent) {
+  //   throw new Error("empty textContent");
+  // }
+  if (!startSpanElement?.textContent || !startSpanElement?.textContent.length) {
     startSpanElement.remove();
   }
 };
